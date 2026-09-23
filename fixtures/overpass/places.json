@@ -1,0 +1,263 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-07-24T11:04:51Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+    {
+      "type": "node",
+      "id": 346612688,
+      "lat": 19.0420614,
+      "lon": 72.818608,
+      "tags": {
+        "historic": "ruins",
+        "name": "Bandra Fort",
+        "old_name": "Castella de Aguarda"
+      }
+    },
+    {
+      "type": "node",
+      "id": 462267688,
+      "lat": 19.0001256,
+      "lon": 72.8141502,
+      "tags": {
+        "historic": "memorial",
+        "name": "Lal Bahadur Shastri"
+      }
+    },
+    {
+      "type": "node",
+      "id": 537762970,
+      "lat": 19.0509899,
+      "lon": 72.8601653,
+      "tags": {
+        "historic": "ruins",
+        "name": "Kala Qila",
+        "name:en": "Riwa Fort",
+        "tourism": "attraction",
+        "wikidata": "Q7338999",
+        "wikimedia_commons": "Category:Riwa Fort",
+        "wikipedia": "en:Riwa Fort"
+      }
+    },
+    {
+      "type": "node",
+      "id": 537766323,
+      "lat": 19.0420113,
+      "lon": 72.8381267,
+      "tags": {
+        "historic": "fort",
+        "name": "माहीम किल्ला",
+        "name:en": "Mahim Fort",
+        "tourism": "attraction",
+        "wikidata": "Q3633207",
+        "wikimedia_commons": "Category:Mahim Fort",
+        "wikipedia": "en:Mahim Fort"
+      }
+    },
+    {
+      "type": "node",
+      "id": 1282389460,
+      "lat": 19.051094,
+      "lon": 72.825701,
+      "tags": {
+        "historic": "memorial",
+        "name": "Statue of Saint Sebastian"
+      }
+    },
+    {
+      "type": "node",
+      "id": 1289231870,
+      "lat": 19.0175495,
+      "lon": 72.8491666,
+      "tags": {
+        "access": "no",
+        "artwork_type": "statue",
+        "historic": "monument",
+        "name": "Mancherji Edulji Joshi Statue",
+        "tourism": "artwork"
+      }
+    },
+    {
+      "type": "node",
+      "id": 2851477517,
+      "lat": 19.0481951,
+      "lon": 72.8258974,
+      "tags": {
+        "denomination": "catholic",
+        "historic": "wayside_shrine",
+        "name": "St John The Baptist Shrine/Oratory",
+        "religion": "christian",
+        "start_date": "1781",
+        "tourism": "attraction"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4211019629,
+      "lat": 19.191385,
+      "lon": 72.9678999,
+      "tags": {
+        "addr:city": "Thane (West)",
+        "addr:street": "Harinivas Circle",
+        "historic": "monument",
+        "name": "Hariniwas Circle"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4640203708,
+      "lat": 19.1147885,
+      "lon": 72.8388317,
+      "tags": {
+        "historic": "monument",
+        "name": "Legendary New India Monument"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4996512693,
+      "lat": 19.0811604,
+      "lon": 72.8827612,
+      "tags": {
+        "addr:city": "Mumbai",
+        "addr:postcode": "400070",
+        "addr:street": "Pipe Line Road",
+        "denomination": "roman_catholic",
+        "historic": "wayside_cross",
+        "inscription": "Come to me, all you who are weary and burdened, and I will give you rest",
+        "name": "Villagers Cross",
+        "service_times": "24 hours"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4999396520,
+      "lat": 19.0828641,
+      "lon": 72.8852568,
+      "tags": {
+        "addr:city": "Mumbai",
+        "addr:postcode": "400070",
+        "addr:street": "Father peter periera road",
+        "historic": "memorial",
+        "inscription": "Holy Cross Chowk",
+        "name": "Holy Cross Chowk"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5010850232,
+      "lat": 19.0818834,
+      "lon": 72.8845054,
+      "tags": {
+        "addr:city": "Mumbai",
+        "addr:postcode": "400070",
+        "addr:street": "Father peter periera road",
+        "historic": "wayside_cross",
+        "name": "Tingling Boys Cross"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5470238023,
+      "lat": 19.0748499,
+      "lon": 72.8471958,
+      "tags": {
+        "aircraft:type": "MiG-23BN",
+        "historic": "aircraft",
+        "name": "MiG-23BN SM-293",
+        "ref": "SM-293"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5880343480,
+      "lat": 19.1338216,
+      "lon": 72.9152685,
+      "tags": {
+        "artwork_subject": "Buddha",
+        "artwork_type": "sculpture",
+        "historic": "monument",
+        "name": "बुद्ध (गांधार स्कूल)",
+        "name:en": "Buddha (Gandhara School)",
+        "name:mr": "बुद्ध (गांधार स्कूल)",
+        "tourism": "artwork"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5880343485,
+      "lat": 19.1329444,
+      "lon": 72.9153056,
+      "tags": {
+        "historic": "monument",
+        "name": "Dr. B.R. Ambedkar"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5880343486,
+      "lat": 19.1329722,
+      "lon": 72.9152778,
+      "tags": {
+        "historic": "monument",
+        "name": "Chathrapati Shivaji",
+        "name:en": "Chhatrapati Shivaji Maharaj bust"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5908533456,
+      "lat": 19.0007564,
+      "lon": 72.8473887,
+      "tags": {
+        "historic": "monument",
+        "name": "Monolithic Bas Relief Depicting Shiva",
+        "natural": "stone",
+        "protected": "yes",
+        "start_date": "600"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5936660853,
+      "lat": 19.121741,
+      "lon": 72.8744012,
+      "tags": {
+        "access": "permissive",
+        "amenity": "place_of_worship",
+        "historic": "ruins",
+        "name": "St. John the Baptist Church",
+        "religion": "christian",
+        "wikidata": "Q7588954",
+        "wikimedia_commons": "Category:SEEPZ church",
+        "wikipedia": "en:St. John the Baptist Church, Mumbai"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5976402115,
+      "lat": 19.0458498,
+      "lon": 72.9095533,
+      "tags": {
+        "historic": "memorial",
+        "material": "stone",
+        "memorial": "statue",
+        "name": "Shivaji"
+      }
+    },
+    {
+      "type": "node",
+      "id": 6187853587,
+      "lat": 19.0189055,
+      "lon": 72.8404523,
+      "tags": {
+        "historic": "monument",
+        "name": "Kabutar Khana",
+        "name:en": "Kabutar Khana"
+      }
+    }
+  ]
+}

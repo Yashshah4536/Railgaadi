@@ -3,6 +3,7 @@
 import type { Journey } from "@/types/models";
 import { formatKm, formatPct } from "@/lib/format/time";
 import { DelayChart } from "@/components/journey/DelayChart";
+import { ElevationChart } from "@/components/journey/ElevationChart";
 
 interface InsightsTabProps {
   journey: Journey;
@@ -59,6 +60,13 @@ export function InsightsTab({ journey }: InsightsTabProps) {
 
       {/* Delay Trend Recharts Area Graph */}
       <DelayChart stops={journey.stops} />
+
+      {/* Elevation Profile Recharts Area Graph */}
+      <ElevationChart
+        coords={journey.routeCoords}
+        totalKm={journey.distance.totalKm}
+        coveredKm={journey.distance.coveredKm}
+      />
 
       {/* Route summary */}
       <div className="bg-[--bg-card] border border-[--border] rounded-[--radius-lg] p-4">

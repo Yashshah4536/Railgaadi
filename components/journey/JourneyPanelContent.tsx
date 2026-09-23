@@ -4,6 +4,7 @@ import type { Journey, Stop } from "@/types/models";
 import { StatusTab } from "./StatusTab";
 import { StopTimeline } from "./StopTimeline";
 import { InsightsTab } from "./InsightsTab";
+import { ExploreTab } from "./ExploreTab";
 import { clsx } from "clsx";
 import { Star, StarOff, Share2, Check } from "lucide-react";
 import { useState } from "react";
@@ -110,13 +111,7 @@ export function JourneyPanelContent({
           </div>
         )}
         {activeTab === "insights" && <InsightsTab journey={journey} />}
-        {activeTab === "explore" && (
-          <div className="p-8 text-center text-[--text-hint] text-sm">
-            <p className="text-2xl mb-2">🏞️</p>
-            <p className="font-semibold text-[--text] mb-1">Explore Landmarks</p>
-            <p className="text-xs">Bridges, tunnels, rivers, and ghat sections coming in Phase 4.</p>
-          </div>
-        )}
+        {activeTab === "explore" && <ExploreTab journey={journey} />}
       </div>
 
       {/* Bottom Action Bar */}
