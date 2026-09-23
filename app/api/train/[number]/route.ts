@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { fetchJourney, RailRadarError } from "@/lib/providers/railradar";
 
+import { checkRateLimit } from "@/lib/ratelimit";
+
 const paramsSchema = z.object({
   number: z.string().regex(/^\d{5}$/, "Train number must be exactly 5 digits"),
 });
@@ -17,6 +19,15 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ number: string }> }
 ) {
+  // Rate limiting (60 req/min)
+  const rl = checkRateLimit(request, 60, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: { code: "RATE_LIMITED", message: "Too many requests. Please slow down." } },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } }
+    );
+  }
+
   const resolvedParams = await params;
 
   // Validate path param

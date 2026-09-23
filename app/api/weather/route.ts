@@ -7,11 +7,21 @@ const querySchema = z.object({
   lng: z.coerce.number().min(-180).max(180),
 });
 
+import { checkRateLimit } from "@/lib/ratelimit";
+
 export async function GET(request: NextRequest) {
+  const rl = checkRateLimit(request, 60, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: { code: "RATE_LIMITED", message: "Too many requests. Please slow down." } },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } }
+    );
+  }
+
   const url = new URL(request.url);
   const parsed = querySchema.safeParse({
     lat: url.searchParams.get("lat"),
-    lng: url.searchParams.get("lng"),
+    lng: url.searchParams.get("lng") ?? url.searchParams.get("lon"),
   });
 
   if (!parsed.success) {

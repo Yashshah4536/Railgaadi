@@ -26,3 +26,52 @@
 **Decision:** RAILRADAR_API_KEY, OPENWEATHER_API_KEY, OPENTOPOGRAPHY_API_KEY live only in `.env.local` and are accessed only in `/app/api/*` route handlers.
 **Reason:** PRD §0 and §11 mandate this. The browser never calls upstream APIs directly.
 **Exception:** NEXT_PUBLIC_MAPTILER_KEY is necessarily public (used in client-side MapLibre). Mitigate by restricting the key to allowed origins in the MapTiler dashboard.
+
+## Phase 2 — Immersive Map & Animation
+
+### D-007: Route Slicing with Turf.js
+**Decision:** Split route LineString into completed track (solid `--completed-track`) and remaining track (dashed `--remaining-track`) using `@turf/line-slice-along` and `@turf/nearest-point-on-line`.
+**Reason:** Gives crisp, zero-latency feedback on train progression along the exact geometry.
+
+### D-008: Marker Tweening via requestAnimationFrame & Bearing
+**Decision:** Implement 1.5-second easing tween with bearing rotation calculation between consecutive GPS points.
+**Reason:** Live GPS updates arrive discretely every 30s. Tweening prevents jumpy icon positions and keeps the locomotive oriented along the track heading.
+
+## Phase 3 — Journey Companion & Analytics
+
+### D-009: Weather Trio Architecture
+**Decision:** Fetch current weather for Origin, Destination, and Current Train Position simultaneously via server-side cached `/api/weather`.
+**Reason:** Provides immediate situational context (rain alerts, extreme heat) without extra client roundtrips.
+
+### D-010: Recharts with ResponsiveContainer for Delay Curve
+**Decision:** Plot delay delta (minutes) against distance along route (km) with reference lines for zero delay.
+**Reason:** Instantly visualizes where delays accumulated or were recovered during the run.
+
+## Phase 4 — Route Delight & Social Sharing
+
+### D-011: OpenTopography Hybrid Sampling with Fast Fallback
+**Decision:** Sample route elevation with 50-point downsampling from OpenTopography global DEM and cache aggressively with 24h TTL.
+**Reason:** Real route profiles can have thousands of coordinates. 50-point sampling keeps chart rendering fluid under 16ms while accurately capturing ghats and plateau ascents.
+
+### D-012: Overpass API Corridor Caching & Mirror Failover
+**Decision:** Use `https://overpass.kumi.systems/api/interpreter` as primary mirror with 24-hour route corridor cache.
+**Reason:** Standard `overpass-api.de` often experiences rate limits or reset connections. Corridor caching isolates users from external downtime.
+
+### D-013: Satori Social Cards with Flexbox Constraints
+**Decision:** Generate dynamic OpenGraph cards using Next.js `ImageResponse` with strict flex layout containers.
+**Reason:** Satori requires explicit `display: flex` on all multi-child divs; ensures deterministic, pixel-perfect social preview rendering for WhatsApp, Twitter, and iMessage.
+
+## Phase 5 — Production Hardening
+
+### D-014: In-Memory Token Bucket Rate Limiter
+**Decision:** Per-IP token-bucket rate limiter in `lib/ratelimit.ts` with configurable bursts and sliding refill windows.
+**Reason:** Prevents abuse of upstream rate-metered keys (RailRadar, OpenWeather) while providing graceful HTTP 429 responses with `Retry-After` headers.
+
+### D-015: Strict Content Security Policy & Security Headers
+**Decision:** Full security headers configured in `next.config.ts` including CSP restricting connections strictly to whitelisted APIs, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `Permissions-Policy`.
+**Reason:** Protects users against clickjacking, MIME sniffing, and cross-site scripting while permitting MapLibre and WebGL tile loading.
+
+### D-016: Privacy-Preserving Telemetry Event Dispatcher
+**Decision:** Implement non-intrusive event emitter in `lib/analytics.ts` dispatching DOM custom events (`railgaadi:analytics`).
+**Reason:** Allows pluggable drop-in analytics (Plausible, PostHog, or self-hosted) with zero user tracking cookies.
+

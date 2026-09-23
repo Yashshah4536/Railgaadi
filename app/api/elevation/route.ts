@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { sampleRouteElevation } from "@/lib/providers/opentopo";
+import { checkRateLimit } from "@/lib/ratelimit";
 
 const bodySchema = z.object({
   coords: z.array(z.tuple([z.number(), z.number()])).min(2),
@@ -8,6 +9,20 @@ const bodySchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const rl = checkRateLimit(request, 30, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: { code: "RATE_LIMITED", message: "Too many requests. Please slow down." } },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rl.retryAfterSec),
+          "X-RateLimit-Remaining": String(rl.remaining),
+        },
+      }
+    );
+  }
+
   try {
     const raw = await request.json();
     const parsed = bodySchema.safeParse(raw);

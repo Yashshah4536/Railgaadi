@@ -11,7 +11,17 @@ const querySchema = z.object({
   q: z.string().min(1).max(100),
 });
 
+import { checkRateLimit } from "@/lib/ratelimit";
+
 export async function GET(request: NextRequest) {
+  const rl = checkRateLimit(request, 60, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: { code: "RATE_LIMITED", message: "Too many search requests. Please slow down." } },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } }
+    );
+  }
+
   const url = new URL(request.url);
   const parsed = querySchema.safeParse({ q: url.searchParams.get("q") ?? "" });
 

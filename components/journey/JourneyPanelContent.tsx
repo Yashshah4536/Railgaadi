@@ -8,6 +8,7 @@ import { ExploreTab } from "./ExploreTab";
 import { clsx } from "clsx";
 import { Star, StarOff, Share2, Check } from "lucide-react";
 import { useState } from "react";
+import { trackTabSwitch, trackShare, trackFavourite } from "@/lib/analytics";
 
 const TABS = [
   { id: "status", label: "Status" },
@@ -42,6 +43,7 @@ export function JourneyPanelContent({
   const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
+    trackShare(journey.train.number, myStationStop?.station.code);
     const url = typeof window !== "undefined"
       ? `${window.location.origin}/train/${journey.train.number}${
           date ? `?date=${date}` : ""
@@ -81,7 +83,10 @@ export function JourneyPanelContent({
             key={t.id}
             role="tab"
             aria-selected={activeTab === t.id}
-            onClick={() => setActiveTab(t.id as typeof activeTab)}
+            onClick={() => {
+              trackTabSwitch(t.id);
+              setActiveTab(t.id as typeof activeTab);
+            }}
             className={clsx(
               "px-4 py-3 text-xs font-semibold whitespace-nowrap transition-colors",
               "border-b-2 -mb-px",
@@ -117,7 +122,10 @@ export function JourneyPanelContent({
       {/* Bottom Action Bar */}
       <div className="shrink-0 border-t border-[--border] px-4 py-3 flex items-center gap-2 bg-[--bg]">
         <button
-          onClick={onToggleFavourite}
+          onClick={() => {
+            trackFavourite(journey.train.number, isFavourite ? "remove" : "add");
+            onToggleFavourite();
+          }}
           aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
           className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-[--radius-md]
                      border border-[--border] text-xs font-semibold text-[--text-muted]

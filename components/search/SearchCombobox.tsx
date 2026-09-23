@@ -6,6 +6,7 @@ import { clsx } from "clsx";
 import { useTrainSearch } from "@/hooks/useTrainSearch";
 import { useRouter } from "next/navigation";
 import { useRecents } from "@/hooks/useRecents";
+import { trackSearch } from "@/lib/analytics";
 import type { TrainSummary } from "@/types/models";
 
 interface SearchComboboxProps {
@@ -27,6 +28,13 @@ export function SearchCombobox({
   const router = useRouter();
   const { query, setQuery, results, isLoading, isActive } = useTrainSearch();
   const { recents, addRecent } = useRecents();
+
+  // Track search completions
+  useEffect(() => {
+    if (query.trim().length >= 2 && !isLoading) {
+      trackSearch(query.trim(), results.length);
+    }
+  }, [query, isLoading, results.length]);
 
   // Show recents when not searching
   const showRecents = !isActive && recents.length > 0;
