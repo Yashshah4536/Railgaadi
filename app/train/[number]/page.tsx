@@ -36,41 +36,16 @@ export default async function TrainPage({
       {/* Top bar */}
       <TopBar trainNumber={number} />
 
-      {/* Main content — for Phase 1, just the panel. Map added in Phase 2. */}
+      {/* Main content with interactive map and journey panel */}
       <main
-        className="flex-1 overflow-hidden"
+        className="flex-1 overflow-hidden relative"
         aria-label={`Journey details for train ${number}`}
       >
-        {/* Desktop layout: panel on left, placeholder map on right */}
-        <div className="h-full flex">
-          {/* Journey panel */}
-          <aside
-            className="w-full md:w-[400px] h-full flex flex-col border-r border-[--border] overflow-hidden"
-            aria-label="Journey information panel"
-          >
-            <JourneyClient
-              trainNumber={number}
-              date={date}
-              initialMyStation={stn}
-            />
-          </aside>
-
-          {/* Map placeholder for Phase 1 (hidden on mobile) */}
-          <div
-            className="hidden md:flex flex-1 items-center justify-center bg-[--bg-input]"
-            aria-hidden="true"
-          >
-            <div className="text-center">
-              <div
-                className="w-16 h-16 rounded-[--radius-xl] flex items-center justify-center mx-auto mb-3"
-                style={{ background: "var(--color-brand)", opacity: 0.2 }}
-              />
-              <p className="text-sm text-[--text-hint]">
-                Map coming in Phase 2
-              </p>
-            </div>
-          </div>
-        </div>
+        <JourneyClient
+          trainNumber={number}
+          date={date}
+          initialMyStation={stn}
+        />
       </main>
     </div>
   );

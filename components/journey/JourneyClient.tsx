@@ -1,26 +1,28 @@
 "use client";
 
+import dynamic from "next/dynamic";
+import { useEffect, useRef } from "react";
 import { useTrainLive } from "@/hooks/useTrainLive";
 import { useUIStore } from "@/store/ui";
-import { StationPlaque } from "@/components/journey/StationPlaque";
-import { ProgressRail } from "@/components/journey/ProgressRail";
-import { StopTimeline } from "@/components/journey/StopTimeline";
-import { RelativeTime } from "@/components/journey/RelativeTime";
-import { StatusChip } from "@/components/ui/StatusChip";
-import { SkeletonPanel } from "@/components/ui/Skeleton";
-import {
-  Star,
-  StarOff,
-  Share2,
-  AlertCircle,
-} from "lucide-react";
 import { useFavourites } from "@/hooks/useFavourites";
 import { useRecents } from "@/hooks/useRecents";
+import { SkeletonPanel } from "@/components/ui/Skeleton";
+import { StatusChip } from "@/components/ui/StatusChip";
+import { BottomSheet } from "@/components/ui/BottomSheet";
+import { JourneyPanelContent } from "@/components/journey/JourneyPanelContent";
+import { AlertCircle } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { clsx } from "clsx";
-import type { Journey } from "@/types/models";
-import { formatKm, formatPct } from "@/lib/format/time";
+
+// Dynamic client-only import for MapLibre map
+const JourneyMap = dynamic(() => import("@/components/map/JourneyMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex flex-col items-center justify-center bg-[#E2E8F0] gap-3">
+      <div className="w-8 h-8 rounded-full border-3 border-[--color-brand] border-t-transparent animate-spin" />
+      <span className="text-xs font-semibold text-[--text-muted]">Loading map...</span>
+    </div>
+  ),
+});
 
 interface JourneyClientProps {
   trainNumber: string;
@@ -76,7 +78,7 @@ export function JourneyClient({
 
   if (isLoading) {
     return (
-      <div className="flex-1 overflow-y-auto">
+      <div className="w-full h-full overflow-y-auto">
         <SkeletonPanel />
       </div>
     );
@@ -84,7 +86,7 @@ export function JourneyClient({
 
   if (error) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 p-8 text-center">
+      <div className="w-full h-full flex flex-col items-center justify-center gap-4 p-8 text-center bg-[--bg]">
         <AlertCircle size={48} className="text-[--color-cancelled]" aria-hidden />
         <div>
           <h2 className="text-lg font-bold text-[--text]">
@@ -114,269 +116,92 @@ export function JourneyClient({
   const myStationStop = myStation
     ? journey.stops.find((s) => s.station.code === myStation)
     : null;
-
-  function handleShare() {
-    const url = `${window.location.origin}/train/${journey!.train.number}${
-      date ? `?date=${date}` : ""
-    }${myStation ? `&stn=${myStation}` : ""}`;
-    if (navigator.share) {
-      navigator.share({ title: journey!.train.name, url });
-    } else {
-      navigator.clipboard.writeText(url);
-      // Toast would go here
-    }
-  }
+  const nextStop = journey.stops.find((s) => s.station.code === journey.nextStop);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="w-full h-full relative overflow-hidden">
       {/* Screen reader live region */}
       <div ref={announceRef} aria-live="polite" className="sr-only" />
 
-      {/* Tabs */}
-      <div
-        className="flex border-b border-[--border] overflow-x-auto shrink-0"
-        role="tablist"
-        aria-label="Journey information tabs"
-      >
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            role="tab"
-            aria-selected={activeTab === t.id}
-            onClick={() => setActiveTab(t.id as typeof activeTab)}
-            className={clsx(
-              "px-4 py-3 text-xs font-semibold whitespace-nowrap transition-colors",
-              "border-b-2 -mb-px",
-              activeTab === t.id
-                ? "border-[--accent] text-[--accent]"
-                : "border-transparent text-[--text-muted] hover:text-[--text]"
-            )}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab content */}
-      <div className="flex-1 overflow-y-auto">
-        {activeTab === "status" && (
-          <StatusTab
+      {/* Desktop Layout: Split view (panel on left, map on right) */}
+      <div className="hidden lg:flex w-full h-full">
+        {/* Left Side Panel */}
+        <aside
+          className="w-[440px] shrink-0 border-r border-[--border] bg-[--bg] flex flex-col h-full overflow-hidden shadow-lg z-10"
+          aria-label="Journey details"
+        >
+          <JourneyPanelContent
             journey={journey}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
             onRefresh={() => refetch()}
-            isRefreshing={isFetching}
+            isFetching={isFetching}
             myStationStop={myStationStop}
+            isFavourite={fav}
+            onToggleFavourite={() =>
+              toggleFavourite({
+                number: journey.train.number,
+                name: journey.train.name,
+              })
+            }
+            date={date}
           />
-        )}
-        {activeTab === "stops" && (
-          <div className="p-4">
-            <StopTimeline stops={journey.stops} />
-          </div>
-        )}
-        {activeTab === "insights" && (
-          <InsightsTab journey={journey} />
-        )}
-        {activeTab === "explore" && (
-          <div className="p-8 text-center text-[--text-hint] text-sm">
-            Explore (Phase 4)
-          </div>
-        )}
-      </div>
+        </aside>
 
-      {/* Bottom action bar */}
-      <div className="shrink-0 border-t border-[--border] px-4 py-3 flex items-center gap-2">
-        <button
-          onClick={() =>
-            toggleFavourite({
-              number: journey.train.number,
-              name: journey.train.name,
-            })
-          }
-          aria-label={fav ? "Remove from favourites" : "Add to favourites"}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-[--radius-md]
-                     border border-[--border] text-xs font-semibold text-[--text-muted]
-                     hover:border-[--accent] hover:text-[--accent] transition-all"
-        >
-          {fav ? (
-            <Star size={14} className="fill-current text-[--color-plaque-bg]" aria-hidden />
-          ) : (
-            <StarOff size={14} aria-hidden />
-          )}
-          {fav ? "Saved" : "Save"}
-        </button>
-
-        <button
-          onClick={handleShare}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-[--radius-md]
-                     border border-[--border] text-xs font-semibold text-[--text-muted]
-                     hover:border-[--accent] hover:text-[--accent] transition-all"
-          aria-label="Share journey link"
-        >
-          <Share2 size={14} aria-hidden />
-          Share
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function StatusTab({
-  journey,
-  onRefresh,
-  isRefreshing,
-  myStationStop,
-}: {
-  journey: Journey;
-  onRefresh: () => void;
-  isRefreshing: boolean;
-  myStationStop: Journey["stops"][0] | null | undefined;
-}) {
-  return (
-    <div className="p-4 flex flex-col gap-4">
-      {/* Status header */}
-      <div className="flex items-center justify-between gap-3">
-        <StatusChip status={journey.status} delayMin={journey.delayMin} />
-        <RelativeTime
-          iso={journey.lastUpdated}
-          onRefresh={onRefresh}
-          isRefreshing={isRefreshing}
-        />
-      </div>
-
-      {/* Station plaque */}
-      <StationPlaque journey={journey} />
-
-      {/* Progress rail */}
-      <ProgressRail journey={journey} />
-
-      {/* My station countdown */}
-      {myStationStop && (
-        <MyStationCard stop={myStationStop} />
-      )}
-
-      {/* Quick stat cards */}
-      <div className="grid grid-cols-2 gap-3">
-        <StatCard
-          label="Completion"
-          value={formatPct(journey.completionPct)}
-          sub={`${Math.round(journey.distance.coveredKm)} km covered`}
-        />
-        <StatCard
-          label="Remaining"
-          value={formatKm(journey.distance.remainingKm)}
-          sub={`of ${Math.round(journey.distance.totalKm)} km`}
-        />
-      </div>
-    </div>
-  );
-}
-
-function MyStationCard({ stop }: { stop: Journey["stops"][0] }) {
-  const eta = stop.expArr ?? stop.schArr;
-  const minutesAway = eta
-    ? Math.max(0, Math.round((new Date(eta).getTime() - Date.now()) / 60000))
-    : null;
-
-  return (
-    <div
-      className="rounded-[--radius-lg] p-4 border"
-      style={{
-        background: "var(--accent-light)",
-        borderColor: "rgba(26,111,232,0.2)",
-      }}
-    >
-      <p className="text-xs font-semibold uppercase tracking-wider text-[--accent] mb-1">
-        My Station
-      </p>
-      <p className="text-base font-bold text-[--text]">{stop.station.name}</p>
-      {minutesAway !== null && (
-        <p className="text-2xl font-black text-[--accent] mt-1 font-tabular">
-          {minutesAway < 60
-            ? `${minutesAway} min`
-            : `${Math.floor(minutesAway / 60)}h ${minutesAway % 60}m`}
-        </p>
-      )}
-      {stop.platform && (
-        <p className="text-xs text-[--text-muted] mt-1">
-          Platform {stop.platform}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function StatCard({
-  label,
-  value,
-  sub,
-}: {
-  label: string;
-  value: string;
-  sub?: string;
-}) {
-  return (
-    <div className="bg-[--bg-card] border border-[--border] rounded-[--radius-lg] p-4">
-      <p className="text-xs text-[--text-hint] mb-1">{label}</p>
-      <p className="text-xl font-bold text-[--text] font-tabular">{value}</p>
-      {sub && <p className="text-xs text-[--text-muted] mt-0.5">{sub}</p>}
-    </div>
-  );
-}
-
-function InsightsTab({ journey }: { journey: Journey }) {
-  const passedStops = journey.stops.filter((s) => s.status === "passed" && s.delayMin != null);
-  const avgDelay =
-    passedStops.length > 0
-      ? Math.round(
-          passedStops.reduce((a, b) => a + (b.delayMin ?? 0), 0) / passedStops.length
-        )
-      : 0;
-  const maxDelay = Math.max(...passedStops.map((s) => s.delayMin ?? 0), 0);
-
-  return (
-    <div className="p-4 flex flex-col gap-4">
-      {/* Stats grid */}
-      <div className="grid grid-cols-2 gap-3">
-        <StatCard label="Completion" value={formatPct(journey.completionPct)} />
-        <StatCard label="Total distance" value={formatKm(journey.distance.totalKm)} />
-        <StatCard label="Covered" value={formatKm(journey.distance.coveredKm)} />
-        <StatCard label="Current delay" value={journey.delayMin > 0 ? `+${journey.delayMin} min` : "On time"} />
-        <StatCard label="Avg delay" value={avgDelay > 0 ? `+${avgDelay} min` : "On time"} />
-        <StatCard label="Max delay" value={maxDelay > 0 ? `+${maxDelay} min` : "–"} />
-      </div>
-
-      {/* Route summary */}
-      <div className="bg-[--bg-card] border border-[--border] rounded-[--radius-lg] p-4">
-        <h3 className="text-sm font-bold text-[--text] mb-3">Route Summary</h3>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-[--text-muted]">From</span>
-            <span className="font-semibold">{journey.origin.name}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-[--text-muted]">To</span>
-            <span className="font-semibold">{journey.destination.name}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-[--text-muted]">Total stops</span>
-            <span className="font-tabular">{journey.stops.filter(s => s.isHalt).length}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-[--text-muted]">Stops passed</span>
-            <span className="font-tabular">{journey.stops.filter(s => s.status === "passed").length}</span>
-          </div>
+        {/* Right Side Map */}
+        <div className="flex-1 h-full relative bg-[#E2E8F0]">
+          <JourneyMap
+            journey={journey}
+            padding={{ top: 50, bottom: 50, left: 50, right: 50 }}
+          />
         </div>
       </div>
 
-      <p className="text-xs text-center text-[--text-hint]">
-        Delay chart & elevation profile coming in Phase 4
-      </p>
+      {/* Mobile Layout: Full-screen map with draggable bottom sheet */}
+      <div className="lg:hidden w-full h-full relative">
+        {/* Full-screen background map */}
+        <div className="absolute inset-0 z-0 bg-[#E2E8F0]">
+          <JourneyMap
+            journey={journey}
+            padding={{ top: 30, bottom: 220, left: 20, right: 20 }}
+          />
+        </div>
+
+        {/* Draggable Bottom Sheet */}
+        <BottomSheet
+          snapPoint="half"
+          peekHeader={
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-xs font-bold text-[--text] truncate">
+                  {journey.train.name}
+                </div>
+                <div className="text-[11px] text-[--text-muted]">
+                  Next: {nextStop?.station.name ?? "–"}
+                </div>
+              </div>
+              <StatusChip status={journey.status} delayMin={journey.delayMin} />
+            </div>
+          }
+        >
+          <JourneyPanelContent
+            journey={journey}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            onRefresh={() => refetch()}
+            isFetching={isFetching}
+            myStationStop={myStationStop}
+            isFavourite={fav}
+            onToggleFavourite={() =>
+              toggleFavourite({
+                number: journey.train.number,
+                name: journey.train.name,
+              })
+            }
+            date={date}
+          />
+        </BottomSheet>
+      </div>
     </div>
   );
 }
-
-const TABS = [
-  { id: "status", label: "Status" },
-  { id: "stops", label: "Stops" },
-  { id: "insights", label: "Insights" },
-  { id: "explore", label: "Explore" },
-] as const;
