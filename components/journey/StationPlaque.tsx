@@ -39,94 +39,100 @@ export function StationPlaque({ journey }: StationPlaqueProps) {
 
   return (
     <div className="animate-plaque-in">
-      <div
-        className="rounded-[--radius-md] text-center overflow-hidden"
-        style={{
-          background: "var(--color-plaque-bg)",
-          border: "4px solid #92400E",
-          boxShadow:
-            "inset 0 1px 0 rgba(255,255,255,0.3), var(--shadow-md)",
-          padding: "var(--space-4) var(--space-6)",
-        }}
-      >
-        {/* Sub header */}
-        <p
-          className="text-[11px] font-bold tracking-widest uppercase mb-1"
-          style={{ color: "var(--color-plaque-sub)" }}
-        >
-          भारतीय रेल · Indian Railways
-        </p>
-
-        {/* Station name */}
-        <h2
-          className="text-2xl font-black tracking-tight leading-tight"
-          style={{
-            color: "var(--color-plaque-text)",
-            letterSpacing: "-0.02em",
-          }}
-        >
-          {stationName.toUpperCase()}
-        </h2>
-
-        {/* Station code */}
-        <p
-          className="text-xs font-bold tracking-[0.15em] uppercase mt-0.5"
-          style={{ color: "var(--color-plaque-sub)" }}
-        >
-          {stationCode}
-        </p>
-
-        {/* Divider */}
         <div
-          className="my-3"
+          className="rounded-[14px] text-center overflow-hidden transition-transform duration-200"
           style={{
-            height: 1,
-            background: "rgba(120,53,15,0.3)",
+            background: "linear-gradient(180deg, #FCD34D 0%, #F59E0B 100%)",
+            border: "4px solid #1C1917",
+            boxShadow: "0 6px 20px rgba(0,0,0,0.12), inset 0 2px 0 rgba(255,255,255,0.4), inset 0 0 0 2px #78350F",
+            padding: "16px 20px",
           }}
-        />
-
-        {/* Next station */}
-        {nextStop ? (
-          <p
-            className="text-sm font-semibold"
-            style={{ color: "var(--color-plaque-sub)" }}
-          >
-            Next:{" "}
-            <span className="font-black">
-              {nextStop.station.name}
+        >
+          {/* Sub header: Bilingual Railways branding */}
+          <div className="flex items-center justify-center gap-2 mb-1.5 select-none">
+            <span
+              className="text-[11px] sm:text-xs font-black tracking-widest uppercase"
+              style={{ color: "#78350F" }}
+            >
+              भारतीय रेल · INDIAN RAILWAYS
             </span>
-            {nextMinutes !== null && (
-              <>
-                {" · "}
-                <span className="font-tabular">
-                  {nextMinutes < 60
-                    ? `${nextMinutes} min`
-                    : `${Math.floor(nextMinutes / 60)}h ${nextMinutes % 60}m`}
-                </span>
-              </>
-            )}
-            {nextStop.platform && (
-              <span className="ml-2 text-xs opacity-75">
-                Pf {nextStop.platform}
+          </div>
+
+          {/* Current / Active Station Name */}
+          <h2
+            className="text-2xl sm:text-3xl font-black tracking-tight leading-tight my-1 text-[#1C1917]"
+            style={{
+              textShadow: "0 1px 1px rgba(255,255,255,0.3)",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            {stationName.toUpperCase()}
+          </h2>
+
+          {/* Station code + Status descriptor */}
+          <div className="flex items-center justify-center gap-2 mt-1 flex-wrap">
+            <span
+              className="text-xs sm:text-sm font-mono font-black tracking-widest px-2 py-0.5 rounded bg-black/10"
+              style={{ color: "#1C1917" }}
+            >
+              {stationCode}
+            </span>
+            {currentStop?.platform && (
+              <span className="text-xs font-bold px-2 py-0.5 rounded bg-[#1C1917] text-[#FBBF24]">
+                Platform {currentStop.platform}
               </span>
             )}
-          </p>
-        ) : journey.status === "reached" ? (
-          <p
-            className="text-sm font-bold"
-            style={{ color: "var(--color-plaque-sub)" }}
-          >
-            Journey Complete ✓
-          </p>
-        ) : (
-          <p
-            className="text-sm"
-            style={{ color: "var(--color-plaque-sub)" }}
-          >
-            {journey.origin.name} → {journey.destination.name}
-          </p>
-        )}
-      </div>
+            <span className="text-xs font-bold text-[#78350F]">
+              {journey.status === "reached"
+                ? "Destination Reached"
+                : journey.status === "not_started"
+                ? "Origin Station"
+                : "Current Location"}
+            </span>
+          </div>
+
+          {/* Divider */}
+          <div
+            className="my-3 mx-auto w-3/4"
+            style={{
+              height: 1.5,
+              background: "rgba(120,53,15,0.25)",
+            }}
+          />
+
+          {/* Next station and ETA countdown */}
+          {nextStop ? (
+            <div className="flex items-center justify-center gap-2 text-xs sm:text-sm font-bold text-[#78350F] flex-wrap">
+              <span>Next:</span>
+              <span className="font-black text-[#1C1917]">
+                {nextStop.station.name}
+              </span>
+              <span className="font-mono text-[11px] text-[#78350F]">
+                ({nextStop.station.code})
+              </span>
+              {nextMinutes !== null && (
+                <span className="font-tabular bg-white/60 px-2 py-0.5 rounded font-black text-[#1C1917] border border-amber-800/20">
+                  {nextMinutes < 60
+                    ? `in ${nextMinutes} min`
+                    : `in ${Math.floor(nextMinutes / 60)}h ${nextMinutes % 60}m`}
+                </span>
+              )}
+              {nextStop.platform && (
+                <span className="text-[11px] font-bold bg-[#1C1917]/10 px-1.5 py-0.5 rounded">
+                  Pf {nextStop.platform}
+                </span>
+              )}
+            </div>
+          ) : journey.status === "reached" ? (
+            <p className="text-sm font-black text-[#1C1917]">
+              ✓ Journey Successfully Completed
+            </p>
+          ) : (
+            <p className="text-xs sm:text-sm font-bold text-[#78350F]">
+              {journey.origin.name} → {journey.destination.name}
+            </p>
+          )}
+        </div>
     </div>
   );
 }

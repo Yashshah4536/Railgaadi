@@ -62,7 +62,7 @@ function WeatherCard({
   return (
     <div
       className={clsx(
-        "flex-1 bg-[--bg-card] border rounded-[--radius-lg] p-3 flex flex-col justify-between min-w-[105px] transition-all",
+        "flex-1 bg-[--bg-card] border rounded-[--radius-lg] p-2.5 sm:p-3 flex flex-col justify-between min-w-0 transition-all",
         highlight
           ? "border-[--accent] bg-[--accent-light]/20 shadow-[var(--shadow-sm)]"
           : "border-[--border]"
@@ -70,7 +70,7 @@ function WeatherCard({
     >
       <div>
         <div className="flex items-center justify-between gap-1 mb-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[--text-hint] truncate">
+          <span className="text-[10px] font-black uppercase tracking-wider text-[--text-hint] truncate">
             {title}
           </span>
           {getWeatherIcon(weather.condition, weather.icon)}
@@ -80,9 +80,9 @@ function WeatherCard({
         </p>
       </div>
 
-      <div className="mt-2.5">
-        <div className="flex items-baseline gap-1">
-          <span className="text-xl font-black text-[--text] font-tabular tracking-tight">
+      <div className="mt-2">
+        <div className="flex items-baseline gap-1 flex-wrap">
+          <span className="text-lg sm:text-2xl font-black text-[--text] font-tabular tracking-tight">
             {weather.tempC}°
           </span>
           <span className="text-[10px] text-[--text-hint]">
@@ -100,12 +100,12 @@ function WeatherCard({
           </div>
         )}
 
-        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-[--border] text-[10px] text-[--text-hint]">
+        <div className="flex items-center justify-between mt-2 pt-2 border-t border-[--border] text-[10px] text-[--text-hint]">
           <span className="flex items-center gap-0.5" title="Humidity">
             <Droplets size={10} /> {weather.humidity}%
           </span>
           <span className="flex items-center gap-0.5" title="Wind speed">
-            <Wind size={10} /> {weather.windKph} km/h
+            <Wind size={10} /> {weather.windKph}kph
           </span>
         </div>
       </div>

@@ -22,21 +22,21 @@ export function RecentsSection() {
           <div key={r.number} className="flex items-center gap-2 group">
             <Link
               href={`/train/${r.number}`}
-              className="flex-1 flex items-center gap-3 px-3 py-2.5 rounded-[--radius-md]
-                         hover:bg-[--bg-input] transition-colors"
+              className="flex-1 flex items-center gap-3 px-3.5 py-3 rounded-[--radius-md]
+                         hover:bg-[--bg-input] active:bg-[--bg-input] transition-colors min-h-[46px]"
             >
-              <span className="text-xs font-mono font-bold text-[--text-hint] font-tabular w-12">
+              <span className="text-xs sm:text-sm font-mono font-black text-[--accent] bg-[--accent-light] px-2 py-0.5 rounded font-tabular">
                 {r.number}
               </span>
-              <span className="text-sm text-[--text-muted] truncate">{r.name}</span>
+              <span className="text-sm sm:text-base font-semibold text-[--text] truncate">{r.name}</span>
             </Link>
             <button
               onClick={() => removeRecent(r.number)}
               aria-label={`Remove ${r.name} from recents`}
-              className="shrink-0 p-1.5 rounded-md opacity-0 group-hover:opacity-100
-                         hover:bg-[--bg-input] transition-all"
+              className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full opacity-70 sm:opacity-0 sm:group-hover:opacity-100
+                         hover:bg-[--bg-input] active:bg-[--bg-input] transition-all"
             >
-              <X size={13} className="text-[--text-hint]" aria-hidden />
+              <X size={15} className="text-[--text-hint]" aria-hidden />
             </button>
           </div>
         ))}

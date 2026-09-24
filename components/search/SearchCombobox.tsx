@@ -128,7 +128,7 @@ export function SearchCombobox({
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          onBlur={() => setTimeout(() => setOpen(false), 150)}
+          onBlur={() => setTimeout(() => setOpen(false), 250)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           autoFocus={autoFocus}
@@ -149,11 +149,14 @@ export function SearchCombobox({
         {query && (
           <button
             type="button"
-            onClick={() => { setQuery(""); inputRef.current?.focus(); }}
-            className="shrink-0 p-1 rounded-full hover:bg-[--bg-input] transition-colors"
-            aria-label="Clear search"
+            onClick={() => {
+              setQuery("");
+              inputRef.current?.focus();
+            }}
+            className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full hover:bg-[--bg-input] active:bg-[--bg-card] transition-colors"
+            aria-label="Clear search query"
           >
-            <X size={16} className="text-[--text-hint]" aria-hidden />
+            <X size={18} className="text-[--text-hint]" aria-hidden />
           </button>
         )}
       </div>
@@ -164,6 +167,7 @@ export function SearchCombobox({
           id={listId}
           role="listbox"
           aria-label="Train suggestions"
+          onMouseDown={(e) => e.preventDefault()}
           className={clsx(
             "absolute top-[calc(100%+8px)] left-0 right-0 z-50",
             "bg-[--bg] border border-[--border] rounded-[--radius-lg]",
@@ -174,8 +178,8 @@ export function SearchCombobox({
           {/* Section header */}
           {showRecents && !isActive && (
             <div className="px-4 pt-3 pb-1">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[--text-hint]">
-                Recent
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[--text-hint]">
+                Recent Searches
               </span>
             </div>
           )}
@@ -239,20 +243,20 @@ function SuggestionRow({
       onClick={onSelect}
       onMouseEnter={onMouseEnter}
       className={clsx(
-        "w-full text-left px-4 py-3 flex items-center gap-3",
-        "transition-colors duration-75",
-        isActive ? "bg-[--bg-input]" : "hover:bg-[--bg-card]"
+        "w-full text-left px-4 py-3.5 flex items-center gap-3 min-h-[50px]",
+        "transition-colors duration-75 border-b border-[--border]/40 last:border-b-0",
+        isActive ? "bg-[--accent-light]/20" : "hover:bg-[--bg-card] active:bg-[--bg-input]"
       )}
     >
       {/* Number badge */}
       <span
-        className="shrink-0 text-xs font-mono font-bold text-[--accent]
-                   bg-[--accent-light] px-2 py-0.5 rounded-md font-tabular"
+        className="shrink-0 text-xs sm:text-sm font-mono font-black text-[--accent]
+                   bg-[--accent-light] px-2.5 py-1 rounded-md font-tabular border border-[--accent]/20"
       >
         {number}
       </span>
       {/* Name with highlight */}
-      <span className="flex-1 min-w-0 text-sm text-[--text] truncate">
+      <span className="flex-1 min-w-0 text-sm sm:text-base font-semibold text-[--text] truncate">
         <HighlightedText text={name} query={query} />
       </span>
     </button>

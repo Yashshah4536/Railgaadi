@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { clsx } from "clsx";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 export type SnapPoint = "peek" | "half" | "full";
 
@@ -14,9 +15,9 @@ interface BottomSheetProps {
 }
 
 const SNAP_HEIGHTS: Record<SnapPoint, number> = {
-  peek: 84, // 84px peek header
-  half: 44, // 44% of viewport
-  full: 88, // 88% of viewport
+  peek: 96, // 96px peek header with safe space
+  half: 48, // 48% of viewport
+  full: 90, // 90% of viewport
 };
 
 export function BottomSheet({
@@ -54,12 +55,12 @@ export function BottomSheet({
     const deltaY = e.changedTouches[0].clientY - dragStartY.current;
     dragStartY.current = null;
 
-    // Significant drag (> 40px)
-    if (deltaY < -40) {
+    // Significant drag (> 35px)
+    if (deltaY < -35) {
       // Dragged UP
       if (startSnapRef.current === "peek") setSnap("half");
       else if (startSnapRef.current === "half") setSnap("full");
-    } else if (deltaY > 40) {
+    } else if (deltaY > 35) {
       // Dragged DOWN
       if (startSnapRef.current === "full") setSnap("half");
       else if (startSnapRef.current === "half") setSnap("peek");
@@ -70,8 +71,9 @@ export function BottomSheet({
     <div
       ref={sheetRef}
       className={clsx(
-        "fixed inset-x-0 bottom-0 z-30 flex flex-col bg-[--bg] rounded-t-[--radius-2xl]",
-        "border-t border-[--border] shadow-[var(--shadow-xl)] transition-all duration-300 ease-out",
+        "fixed inset-x-0 bottom-0 z-30 flex flex-col bg-[--bg] rounded-t-[24px]",
+        "border-t border-[--border] shadow-[0_-8px_32px_rgba(0,0,0,0.14)]",
+        "transition-all duration-300 ease-out",
         className
       )}
       style={{
@@ -79,23 +81,48 @@ export function BottomSheet({
           currentSnap === "peek"
             ? `${SNAP_HEIGHTS.peek}px`
             : `${SNAP_HEIGHTS[currentSnap]}vh`,
+        paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}
       role="region"
       aria-label="Journey details sheet"
     >
-      {/* Drag handle pill */}
+      {/* Top Handle & Controls Bar */}
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
+        className="w-full shrink-0 flex flex-col items-center select-none pt-2.5 pb-1 px-4 cursor-pointer bg-[--bg] rounded-t-[24px]"
         onClick={() => {
           if (currentSnap === "peek") setSnap("half");
-          else if (currentSnap === "half") setSnap("full");
-          else setSnap("peek");
         }}
-        className="w-full py-2.5 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing shrink-0 select-none"
-        title="Tap or drag to resize"
       >
-        <div className="w-10 h-1.5 rounded-full bg-[--border] hover:bg-[--text-hint] transition-colors" />
+        {/* Grab bar */}
+        <div className="w-12 h-1.5 rounded-full bg-[--border] hover:bg-[--text-hint] transition-colors" />
+
+        {/* Quick expand/collapse helper for older users */}
+        <div className="w-full flex items-center justify-between mt-1 text-xs text-[--text-muted]">
+          <span className="text-[11px] font-semibold text-[--text-hint] tracking-wide uppercase">
+            {currentSnap === "peek" ? "Tap or drag up for details" : currentSnap === "half" ? "Journey Details" : "Full View"}
+          </span>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (currentSnap === "peek") setSnap("half");
+              else if (currentSnap === "half") setSnap("full");
+              else setSnap("half");
+            }}
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[--bg-input] text-[--text-muted] transition-colors"
+            aria-label={currentSnap === "full" ? "Collapse to half" : "Expand sheet"}
+          >
+            {currentSnap === "full" ? (
+              <ChevronDown size={18} />
+            ) : currentSnap === "half" ? (
+              <ChevronUp size={18} />
+            ) : (
+              <ChevronUp size={18} />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Peek header (visible in peek mode) */}
@@ -104,7 +131,7 @@ export function BottomSheet({
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
           onClick={() => setSnap("half")}
-          className="px-4 pb-2 shrink-0 cursor-pointer"
+          className="px-4 pb-2.5 shrink-0 cursor-pointer"
         >
           {peekHeader}
         </div>

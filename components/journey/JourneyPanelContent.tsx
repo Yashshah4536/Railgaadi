@@ -74,7 +74,7 @@ export function JourneyPanelContent({
     <div className="flex flex-col h-full overflow-hidden">
       {/* Tab Navigation */}
       <div
-        className="flex border-b border-[--border] overflow-x-auto shrink-0 bg-[--bg]"
+        className="flex border-b border-[--border] shrink-0 bg-[--bg] px-2"
         role="tablist"
         aria-label="Journey details tabs"
       >
@@ -88,11 +88,11 @@ export function JourneyPanelContent({
               setActiveTab(t.id as typeof activeTab);
             }}
             className={clsx(
-              "px-4 py-3 text-xs font-semibold whitespace-nowrap transition-colors",
-              "border-b-2 -mb-px",
+              "flex-1 py-3 px-2 text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150",
+              "flex items-center justify-center min-h-[46px] border-b-2 -mb-px",
               activeTab === t.id
-                ? "border-[--accent] text-[--accent]"
-                : "border-transparent text-[--text-muted] hover:text-[--text]"
+                ? "border-[--accent] text-[--accent] bg-[--accent-light]/20"
+                : "border-transparent text-[--text-muted] hover:text-[--text] hover:bg-[--bg-input]/40"
             )}
           >
             {t.label}
@@ -120,34 +120,43 @@ export function JourneyPanelContent({
       </div>
 
       {/* Bottom Action Bar */}
-      <div className="shrink-0 border-t border-[--border] px-4 py-3 flex items-center gap-2 bg-[--bg]">
+      <div
+        className="shrink-0 border-t border-[--border] px-4 pt-3 flex items-center gap-3 bg-[--bg]"
+        style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom, 0px))" }}
+      >
         <button
           onClick={() => {
             trackFavourite(journey.train.number, isFavourite ? "remove" : "add");
             onToggleFavourite();
           }}
           aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
-          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-[--radius-md]
-                     border border-[--border] text-xs font-semibold text-[--text-muted]
-                     hover:border-[--accent] hover:text-[--accent] transition-all"
+          className="flex-1 h-11 flex items-center justify-center gap-2 px-4 rounded-[--radius-md]
+                     border border-[--border] text-sm font-bold text-[--text]
+                     hover:border-[--accent] hover:text-[--accent] hover:bg-[--bg-input]/50
+                     active:scale-[0.98] transition-all"
         >
           {isFavourite ? (
-            <Star size={14} className="fill-current text-[#FBBF24]" aria-hidden />
+            <Star size={16} className="fill-current text-[#FBBF24]" aria-hidden />
           ) : (
-            <StarOff size={14} aria-hidden />
+            <StarOff size={16} aria-hidden />
           )}
-          {isFavourite ? "Saved" : "Save"}
+          {isFavourite ? "Saved" : "Save Train"}
         </button>
 
         <button
           onClick={handleShare}
-          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-[--radius-md]
-                     border border-[--border] text-xs font-semibold text-[--text-muted]
-                     hover:border-[--accent] hover:text-[--accent] transition-all"
+          className="flex-1 h-11 flex items-center justify-center gap-2 px-4 rounded-[--radius-md]
+                     border border-[--border] text-sm font-bold text-[--text]
+                     hover:border-[--accent] hover:text-[--accent] hover:bg-[--bg-input]/50
+                     active:scale-[0.98] transition-all"
           aria-label="Share journey link"
         >
-          {copied ? <Check size={14} className="text-green-600" /> : <Share2 size={14} aria-hidden />}
-          {copied ? "Link Copied!" : "Share"}
+          {copied ? (
+            <Check size={16} className="text-green-600" />
+          ) : (
+            <Share2 size={16} aria-hidden />
+          )}
+          {copied ? "Link Copied!" : "Share Live"}
         </button>
       </div>
     </div>

@@ -109,16 +109,21 @@ export function StopTimeline({ stops }: StopTimelineProps) {
             </div>
 
             {/* Content */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between gap-2">
+            <div
+              className={clsx(
+                "flex-1 min-w-0 transition-colors rounded-xl p-2",
+                isCurrent && "bg-[--accent-light]/30 border border-[--accent]/30 shadow-[var(--shadow-xs)]"
+              )}
+            >
+              <div className="flex items-start justify-between gap-3">
                 {/* Station info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span
                       className={clsx(
-                        "text-sm font-semibold",
+                        "text-sm sm:text-base font-bold tracking-tight",
                         isCurrent
-                          ? "text-[--color-brand]"
+                          ? "text-[--accent]"
                           : isPassed
                           ? "text-[--text-muted]"
                           : "text-[--text]"
@@ -126,36 +131,30 @@ export function StopTimeline({ stops }: StopTimelineProps) {
                     >
                       {stop.station.name}
                     </span>
-                    <span className="text-[11px] text-[--text-hint] font-mono">
+                    <span className="text-xs text-[--text-hint] font-mono font-bold">
                       {stop.station.code}
                     </span>
                     {isCurrent && (
-                      <span
-                        className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                        style={{
-                          background: "var(--color-plaque-bg)",
-                          color: "var(--color-plaque-sub)",
-                        }}
-                      >
-                        HERE
+                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#1C1917] text-[#FBBF24]">
+                        CURRENT STOP
                       </span>
                     )}
                   </div>
 
-                  {/* Platform + halt */}
-                  <div className="flex items-center gap-2 mt-0.5">
+                  {/* Platform + halt details */}
+                  <div className="flex items-center gap-2 mt-1 flex-wrap">
                     {stop.platform && (
-                      <span className="text-[11px] text-[--text-hint]">
-                        Pf {stop.platform}
+                      <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950 dark:text-amber-200">
+                        Platform {stop.platform}
                       </span>
                     )}
                     {stop.haltMin != null && stop.haltMin > 0 && (
-                      <span className="text-[11px] text-[--text-hint]">
-                        · {stop.haltMin} min halt
+                      <span className="text-xs text-[--text-hint] font-medium">
+                        {stop.haltMin}m halt
                       </span>
                     )}
                     {stop.distanceKm > 0 && (
-                      <span className="text-[11px] text-[--text-hint] font-tabular">
+                      <span className="text-xs text-[--text-hint] font-tabular">
                         · {Math.round(stop.distanceKm)} km
                       </span>
                     )}
@@ -165,30 +164,36 @@ export function StopTimeline({ stops }: StopTimelineProps) {
                 {/* Time info */}
                 <div className="flex flex-col items-end shrink-0 gap-0.5">
                   {/* Scheduled time */}
-                  <span
-                    className={clsx(
-                      "text-sm font-tabular font-semibold",
-                      isPassed ? "text-[--text-hint] line-through" : "text-[--text]"
-                    )}
-                  >
-                    {formatTime(stop.schArr ?? stop.schDep)}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] text-[--text-hint] uppercase">Sch</span>
+                    <span
+                      className={clsx(
+                        "text-sm font-tabular font-bold",
+                        isPassed ? "text-[--text-hint] line-through" : "text-[--text]"
+                      )}
+                    >
+                      {formatTime(stop.schArr ?? stop.schDep)}
+                    </span>
+                  </div>
 
                   {/* Expected / actual time if different */}
                   {stop.expArr && stop.expArr !== stop.schArr && (
-                    <span
-                      className="text-xs font-tabular"
-                      style={{
-                        color:
-                          (stop.delayMin ?? 0) > 30
-                            ? "var(--color-late)"
-                            : (stop.delayMin ?? 0) > 5
-                            ? "var(--color-delayed)"
-                            : "var(--color-on-time)",
-                      }}
-                    >
-                      {formatTime(stop.expArr)}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] text-[--text-hint] uppercase">Live</span>
+                      <span
+                        className="text-xs sm:text-sm font-tabular font-bold"
+                        style={{
+                          color:
+                            (stop.delayMin ?? 0) > 30
+                              ? "var(--color-late)"
+                              : (stop.delayMin ?? 0) > 5
+                              ? "var(--color-delayed)"
+                              : "var(--color-on-time)",
+                        }}
+                      >
+                        {formatTime(stop.expArr)}
+                      </span>
+                    </div>
                   )}
 
                   {/* Delay chip */}

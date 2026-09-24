@@ -127,21 +127,37 @@ export function StatusTab({
 
       {/* Next station quick summary card */}
       {nextStop && (
-        <div className="bg-[--bg-card] border border-[--border] rounded-[--radius-lg] p-3.5 flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-[--bg-input] flex items-center justify-center text-[--accent]">
-              <Clock size={16} />
+        <div className="bg-[--bg-card] border border-[--border] rounded-[--radius-lg] p-3.5 flex items-center justify-between text-sm shadow-[var(--shadow-xs)]">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-9 h-9 rounded-full bg-[--accent-light] flex items-center justify-center text-[--accent] shrink-0">
+              <Clock size={18} />
             </div>
-            <div>
-              <p className="text-xs text-[--text-muted]">Upcoming Stop</p>
-              <p className="font-bold text-[--text]">{nextStop.station.name}</p>
+            <div className="min-w-0">
+              <span className="text-[11px] font-bold text-[--text-hint] uppercase tracking-wider">
+                Upcoming Stop
+              </span>
+              <p className="font-bold text-sm sm:text-base text-[--text] truncate">
+                {nextStop.station.name}
+              </p>
+              {nextStop.platform && (
+                <span className="inline-block text-[11px] font-bold text-amber-900 bg-amber-100 dark:bg-amber-950 dark:text-amber-200 px-1.5 py-0.2 rounded border border-amber-300/60 mt-0.5">
+                  Platform {nextStop.platform}
+                </span>
+              )}
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-xs text-[--text-muted]">ETA</p>
-            <p className="font-bold text-[--text] font-tabular">
+          <div className="text-right shrink-0">
+            <span className="text-[11px] font-bold text-[--text-hint] uppercase tracking-wider">
+              ETA
+            </span>
+            <p className="font-black text-sm sm:text-base text-[--text] font-tabular">
               {nextStop.expArr ? formatTime(nextStop.expArr) : nextStop.schArr ? formatTime(nextStop.schArr) : "--"}
             </p>
+            {nextStop.delayMin != null && nextStop.delayMin > 0 && (
+              <span className="text-[11px] font-bold text-[--color-delayed] font-tabular block">
+                +{nextStop.delayMin}m delay
+              </span>
+            )}
           </div>
         </div>
       )}
