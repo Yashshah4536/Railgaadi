@@ -391,6 +391,12 @@ export default function JourneyMap({
     updateMapLayersRef.current = updateMapLayers;
   }, [updateMapLayers]);
 
+  const initialMapStyleRef = useRef(mapStyle);
+  const mapLoadedRef = useRef(mapLoaded);
+  useEffect(() => {
+    mapLoadedRef.current = mapLoaded;
+  }, [mapLoaded]);
+
   // Initialize Map
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -399,7 +405,7 @@ export default function JourneyMap({
     try {
       const map = new maplibregl.Map({
         container: mapContainerRef.current,
-        style: getMapStyleUrl(mapStyle),
+        style: getMapStyleUrl(initialMapStyleRef.current),
         center: [77.209, 28.6139], // Default Delhi
         zoom: 5,
         attributionControl: { compact: true },
@@ -416,7 +422,7 @@ export default function JourneyMap({
 
       map.on("error", (e) => {
         console.error("[maplibre] Map error:", e);
-        if (!mapLoaded) {
+        if (!mapLoadedRef.current) {
           setMapError("Failed to load map style. Please check your network or API key.");
         }
       });
