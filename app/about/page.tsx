@@ -13,8 +13,15 @@ export default function AboutPage() {
           <span style={{ color: "var(--color-brand)" }}>Rail</span>Gaadi
         </h1>
         <p className="text-[--text-muted] mb-8">
-          A live Indian train tracker built at{" "}
-          <strong>Build &amp; Beyond</strong> · ISTE KJSCE
+          A live Indian train tracker built by{" "}
+          <a
+            href="https://viramtech.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-[--accent] hover:underline"
+          >
+            Yash Shah · ViramTech
+          </a>
         </p>
 
         <section className="mb-8">

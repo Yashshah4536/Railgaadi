@@ -1,6 +1,6 @@
 # RailGaadi — Product Requirements Document
 
-Version 1.1 · Owner: Yash Shah · Built at *Build & Beyond* (ISTE KJSCE)
+Version 1.1 · Owner: Yash Shah (ViramTech · viramtech.com)
 Companion files: `DESIGN.md` (visual system). Read both before writing code.
 
 ---

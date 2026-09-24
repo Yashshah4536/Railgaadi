@@ -89,7 +89,15 @@ export default function HomePage() {
           </a>
         </p>
         <p className="mt-1 text-[--text-hint]">
-          Built at <span className="font-semibold">Build &amp; Beyond</span> · ISTE KJSCE
+          Built by{" "}
+          <a
+            href="https://viramtech.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-[--text-secondary] hover:text-[--accent]"
+          >
+            Yash Shah · ViramTech
+          </a>
         </p>
       </footer>
     </main>

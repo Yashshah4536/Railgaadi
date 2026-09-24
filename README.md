@@ -17,7 +17,7 @@ Most train tracking applications in India feel noisy, cluttered, and anxiety-ind
 
 From the iconic **Indian Railways yellow station plaques** to **smooth train marker animations**, **elevation profiles across mountain ghats**, and **corridor landmark discoveries**, RailGaadi elevates train tracking into a delightful travel story.
 
-Built at *Build & Beyond* (ISTE KJSCE) by **Yash Shah**.
+Built by **Yash Shah** ([ViramTech](https://viramtech.com)).
 
 ---
 

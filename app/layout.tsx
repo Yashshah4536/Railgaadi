@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "Track any Indian train live. See real-time location on an interactive map, delays, ETAs, and what's along the route — weather, rivers, mountains, landmarks.",
   keywords:
     "train tracking, live train status, Indian Railways, NTES, where is my train, train delay, train map",
-  authors: [{ name: "Yash Shah — Build & Beyond, ISTE KJSCE" }],
+  authors: [{ name: "Yash Shah (ViramTech)", url: "https://viramtech.com" }],
   openGraph: {
     title: "RailGaadi — Live Indian Train Tracker",
     description: "Track any Indian train live on a beautiful interactive map.",
